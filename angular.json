@@ -1,7 +1,146 @@
 {
   "$schema": "./node_modules/@angular/cli/lib/config/schema.json",
+  "cli": {
+    "analytics": "e6722a6e-6321-4717-9304-677be6e9d2e4"
+  },
   "version": 1,
   "newProjectRoot": "projects",
   "projects": {
-  }
+    "core": {
+      "projectType": "library",
+      "root": "projects/core",
+      "sourceRoot": "projects/core/src",
+      "prefix": "lib",
+      "architect": {
+        "build": {
+          "builder": "@angular-devkit/build-angular:ng-packagr",
+          "options": {
+            "project": "projects/core/ng-package.json"
+          },
+          "configurations": {
+            "production": {
+              "tsConfig": "projects/core/tsconfig.lib.prod.json"
+            },
+            "development": {
+              "tsConfig": "projects/core/tsconfig.lib.json"
+            }
+          },
+          "defaultConfiguration": "production"
+        },
+        "test": {
+          "builder": "@angular-devkit/build-angular:karma",
+          "options": {
+            "main": "projects/core/src/test.ts",
+            "tsConfig": "projects/core/tsconfig.spec.json",
+            "karmaConfig": "projects/core/karma.conf.js"
+          },
+          "configurations": { "debug": { "karmaConfig": "./karma-debug.conf.js" } }
+        }
+      }
+    },
+    "customer-frontend": {
+      "projectType": "application",
+      "schematics": {
+        "@schematics/angular:component": {
+          "style": "scss"
+        },
+        "@schematics/angular:application": {
+          "strict": true
+        }
+      },
+      "root": "projects/customer-frontend",
+      "sourceRoot": "projects/customer-frontend/src",
+      "prefix": "app",
+      "architect": {
+        "build": {
+          "builder": "@angular-devkit/build-angular:browser",
+          "options": {
+            "outputPath": "dist/customer-frontend",
+            "index": "projects/customer-frontend/src/index.html",
+            "main": "projects/customer-frontend/src/main.ts",
+            "polyfills": "projects/customer-frontend/src/polyfills.ts",
+            "tsConfig": "projects/customer-frontend/tsconfig.app.json",
+            "inlineStyleLanguage": "scss",
+            "assets": [
+              "projects/customer-frontend/src/favicon.ico",
+              "projects/customer-frontend/src/assets"
+            ],
+            "styles": [
+              "projects/customer-frontend/src/styles.scss"
+            ],
+            "scripts": []
+          },
+          "configurations": {
+            "production": {
+              "budgets": [
+                {
+                  "type": "initial",
+                  "maximumWarning": "500kb",
+                  "maximumError": "1mb"
+                },
+                {
+                  "type": "anyComponentStyle",
+                  "maximumWarning": "2kb",
+                  "maximumError": "4kb"
+                }
+              ],
+              "fileReplacements": [
+                {
+                  "replace": "projects/customer-frontend/src/environments/environment.ts",
+                  "with": "projects/customer-frontend/src/environments/environment.prod.ts"
+                }
+              ],
+              "outputHashing": "all"
+            },
+            "development": {
+              "buildOptimizer": false,
+              "optimization": false,
+              "vendorChunk": true,
+              "extractLicenses": false,
+              "sourceMap": true,
+              "namedChunks": true
+            }
+          },
+          "defaultConfiguration": "production"
+        },
+        "serve": {
+          "builder": "@angular-devkit/build-angular:dev-server",
+          "configurations": {
+            "production": {
+              "browserTarget": "customer-frontend:build:production"
+            },
+            "development": {
+              "browserTarget": "customer-frontend:build:development"
+            }
+          },
+          "defaultConfiguration": "development"
+        },
+        "extract-i18n": {
+          "builder": "@angular-devkit/build-angular:extract-i18n",
+          "options": {
+            "browserTarget": "customer-frontend:build"
+          }
+        },
+        "test": {
+          "builder": "@angular-devkit/build-angular:karma",
+          "options": {
+            "main": "projects/customer-frontend/src/test.ts",
+            "polyfills": "projects/customer-frontend/src/polyfills.ts",
+            "tsConfig": "projects/customer-frontend/tsconfig.spec.json",
+            "karmaConfig": "projects/customer-frontend/karma.conf.js",
+            "inlineStyleLanguage": "scss",
+            "assets": [
+              "projects/customer-frontend/src/favicon.ico",
+              "projects/customer-frontend/src/assets"
+            ],
+            "styles": [
+              "projects/customer-frontend/src/styles.scss"
+            ],
+            "scripts": []
+          }
+        }
+      }
+    }
+  },
+  "defaultProject": "customer-frontend"
 }
